@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3b7a2a" />
+  <title>Cuaderno Linux Mint — Aprende, practica y evalúate</title>
+  <meta name="description" content="Plataforma para aprender Linux Mint: cursos guiados, terminal de práctica, quizzes, certificados y diccionario de comandos." />
+  <link rel="canonical" href="https://cuaderno-linux-mint.local/" />
+
+  <!-- Favicon 🐧 como SVG inline (sin archivos extra) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%A7%3C/text%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%A7%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph (previsualización al compartir el enlace) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Cuaderno Linux Mint" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:title" content="Cuaderno Linux Mint — Aprende, practica y evalúate" />
+  <meta property="og:description" content="Cursos guiados, terminal de práctica, quizzes, certificados y diccionario de comandos para aprender Linux Mint." />
+  <meta property="og:image" content="og-image.svg" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cuaderno Linux Mint — Aprende, practica y evalúate" />
+  <meta name="twitter:description" content="Cursos guiados, terminal de práctica, quizzes y certificados para aprender Linux Mint." />
+  <meta name="twitter:image" content="og-image.svg" />
+
+  <!-- Tipografía Inter (mejora la legibilidad; degrada a fuentes del sistema sin conexión) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+
+  <!-- Hoja de estilos externa (modo oscuro/claro, responsivo, temática Linux) -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <!-- Enlace de accesibilidad para saltar directamente al contenido -->
+  <a href="#contenidoPrincipal" class="salto-contenido">Saltar al contenido</a>
+
+  <!-- ============================================================
+       ENCABEZADO
+       ============================================================ -->
+  <header>
+    <a class="marca" href="#contenidoPrincipal" onclick="volverAlMenu();return false;" aria-label="BenaviDev, ir al inicio">
+      <span class="logo" aria-hidden="true">🐧</span>
+      <span class="marca-nombre">Benavi<span class="marca-acento">Dev</span></span>
+    </a>
+
+    <button class="btn-icono menu-toggle" id="btnMenu" title="Menú" aria-label="Abrir menú de secciones" aria-expanded="false" aria-controls="menuPrincipal" onclick="alternarMenuMovil()">☰</button>
+
+    <nav class="menu-principal" id="menuPrincipal" aria-label="Secciones de la plataforma">
+      <button class="menu-link" onclick="irACursos()">Cursos</button>
+      <button class="menu-link" onclick="abrirComandos()">Comandos</button>
+      <button class="menu-link" onclick="abrirGuiaServidor()">Publica tu web</button>
+      <button class="menu-link" onclick="abrirCertificados()">Certificados</button>
+    </nav>
+
+    <div class="header-acciones">
+      <!-- Indicador de nivel global / XP -->
+      <span class="xp-indicador" id="xpIndicador" title="Tu nivel y experiencia">Nv.1 · 0 XP</span>
+      <span class="nivel-actual" id="indicadorNivel">Selecciona un nivel</span>
+      <!-- Botón de cuenta / perfil -->
+      <button class="btn-icono" id="btnCuenta" title="Mi cuenta" aria-label="Mi cuenta" data-tour="cuenta" onclick="abrirCuenta()">👤</button>
+      <!-- Botón terminal de práctica (disponible siempre) -->
+      <button class="btn-icono" id="btnTerminal" title="Terminal de práctica" aria-label="Abrir terminal de práctica" onclick="abrirTerminal()">💻</button>
+      <!-- Botón de logros -->
+      <button class="btn-icono" id="btnLogros" title="Mis logros" aria-label="Ver mis logros" onclick="abrirLogros()">🏆</button>
+      <!-- Botón de cambio de tema (oscuro/claro) -->
+      <button class="btn-icono" id="btnTema" title="Cambiar tema" aria-label="Cambiar entre tema claro y oscuro" onclick="alternarTema()">🌙</button>
+    </div>
+  </header>
+
+  <main id="contenidoPrincipal">
+    <!-- ============================================================
+         PANTALLA 1: BIENVENIDA / SELECCIÓN DE NIVEL
+         ============================================================ -->
+    <section id="pantallaBienvenida" class="bienvenida" aria-label="Inicio">
+      <div class="hero">
+        <p class="hero-marca">BenaviDev</p>
+        <h1 class="hero-titulo">Aprende <span>Linux</span> de verdad,<br>de la terminal a la nube</h1>
+        <p class="hero-sub">Cursos guiados, práctica en una terminal real y certificados. A tu ritmo y en español.</p>
+
+        <div class="hero-busqueda">
+          <label for="busquedaGlobal" class="hero-busqueda-lbl">¿Qué quieres aprender?</label>
+          <div class="busqueda-caja">
+            <span class="busqueda-icono" aria-hidden="true">🔍</span>
+            <input id="busquedaGlobal" type="search" autocomplete="off"
+                   placeholder="Busca comandos, cursos o temas (ej: permisos, nmap, bash...)"
+                   oninput="buscarGlobal(this.value)" onfocus="buscarGlobal(this.value)" />
+          </div>
+          <div id="resultadosGlobal" class="resultados-global oculto" role="listbox" aria-label="Resultados de búsqueda"></div>
+          <p class="hero-busqueda-nota">Empieza cualquier curso gratis · tu progreso se guarda en este dispositivo</p>
+        </div>
+      </div>
+
+      <!-- Panel de progreso global (XP, nivel, racha) -->
+      <div class="panel-xp" id="panelXP" data-tour="xp"></div>
+
+      <!-- Reto diario (lo rellena retos.js) -->
+      <div class="reto-diario" id="retoDiario"></div>
+
+      <h3 class="seccion-titulo" data-tour="notas">Iniciando en Linux</h3>
+      <p class="seccion-sub">Elige tu nivel y lleva tu cuaderno de aprendizaje.</p>
+      <div class="niveles" data-tour="niveles">
+        <!-- Cada tarjeta muestra progreso real del nivel -->
+        <div class="tarjeta-nivel" role="button" tabindex="0" onclick="seleccionarNivel('principiante')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();seleccionarNivel('principiante')}">
+          <span class="icono" aria-hidden="true">🌱</span>
+          <h3>Principiante</h3>
+          <small>Primeros pasos: instalación, escritorio, comandos básicos.</small>
+          <div class="mini-progreso"><div class="mini-progreso-barra" id="miniprog-principiante"></div></div>
+          <div class="conteo" id="conteo-principiante">0 temas</div>
+        </div>
+
+        <div class="tarjeta-nivel" role="button" tabindex="0" onclick="seleccionarNivel('intermedio')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();seleccionarNivel('intermedio')}">
+          <span class="icono" aria-hidden="true">⚙️</span>
+          <h3>Intermedio</h3>
+          <small>Terminal, permisos, paquetes, configuración del sistema.</small>
+          <div class="mini-progreso"><div class="mini-progreso-barra" id="miniprog-intermedio"></div></div>
+          <div class="conteo" id="conteo-intermedio">0 temas</div>
+        </div>
+
+        <div class="tarjeta-nivel" role="button" tabindex="0" onclick="seleccionarNivel('avanzado')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();seleccionarNivel('avanzado')}">
+          <span class="icono" aria-hidden="true">🚀</span>
+          <h3>Avanzado</h3>
+          <small>Scripts, servicios, redes, administración profunda.</small>
+          <div class="mini-progreso"><div class="mini-progreso-barra" id="miniprog-avanzado"></div></div>
+          <div class="conteo" id="conteo-avanzado">0 temas</div>
+        </div>
+      </div>
+
+      <!-- ===== ACADEMIA: cursos guiados ===== -->
+      <h3 class="seccion-titulo" data-tour="academia">Cursos guiados</h3>
+      <p class="seccion-sub">Lecciones paso a paso con teoría, ejemplos, código y preguntas de repaso.</p>
+      <div class="grid-modulos" id="gridModulos"></div>
+
+      <!-- ===== Herramientas y recursos ===== -->
+      <h3 class="seccion-titulo" data-tour="herramientas">Herramientas y recursos</h3>
+      <p class="seccion-sub">Practica, repasa tu progreso y lleva tu aprendizaje más allá.</p>
+      <nav class="bienvenida-botones" aria-label="Herramientas y recursos">
+        <button class="btn-secundario" onclick="abrirComandos()">Diccionario de comandos</button>
+        <button class="btn-secundario" onclick="abrirGuiaServidor()">Crea tu primera página web pública</button>
+        <button class="btn-secundario" onclick="abrirResumen()">Generar resumen</button>
+        <button class="btn-secundario" onclick="abrirCertificados()">Mis certificados</button>
+      </nav>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA 2: SECCIÓN DE NOTAS
+         ============================================================ -->
+    <section id="pantallaNotas" class="oculto">
+      <div class="barra-acciones">
+        <h2>Mis notas <span class="etiqueta-nivel" id="etiquetaNivel">Nivel</span></h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Cambiar de nivel</button>
+        <button class="btn-aviso" onclick="abrirResumen()">📋 Resumen</button>
+        <button class="btn-primario" onclick="mostrarFormularioNueva()">＋ Nueva nota</button>
+      </div>
+
+      <!-- Barra de progreso del nivel -->
+      <div class="progreso-panel">
+        <div class="progreso-texto" id="progresoTexto">Has cubierto 0 de 0 temas</div>
+        <div class="progreso-barra"><div class="progreso-relleno" id="progresoRelleno"></div></div>
+      </div>
+
+      <!-- Pestañas: Mis notas / Guía / Quiz -->
+      <div class="pestanas">
+        <button class="pestana activa" id="pestanaNotas" onclick="cambiarVista('notas')">📝 Mis notas</button>
+        <button class="pestana" id="pestanaGuia" onclick="cambiarVista('guia')">📚 Guía</button>
+        <button class="pestana" id="pestanaQuiz" onclick="cambiarVista('quiz')">🎯 Quiz</button>
+      </div>
+
+      <!-- ===== VISTA A: MIS NOTAS ===== -->
+      <div id="vistaNotas">
+        <!-- Buscador en tiempo real -->
+        <div class="buscador">
+          <span class="buscador-icono" aria-hidden="true">🔍</span>
+          <label for="inputBuscar" class="sr-only">Buscar en mis notas</label>
+          <input type="text" id="inputBuscar" placeholder="Buscar por título o contenido..." oninput="renderizarNotas()" />
+          <button class="btn-secundario" id="btnLimpiarBusqueda" onclick="limpiarBusqueda()">Limpiar</button>
+        </div>
+
+        <!-- Barra de etiquetas para filtrar -->
+        <div id="barraEtiquetas" class="barra-etiquetas"></div>
+
+        <!-- Formulario de creación/edición (oculto por defecto) -->
+        <div id="formularioNota" class="formulario-nota oculto">
+          <h3 id="tituloFormulario">Nueva nota</h3>
+          <input type="hidden" id="notaId" />
+          <div class="campo">
+            <label for="inputTitulo">Tema</label>
+            <input type="text" id="inputTitulo" placeholder="Ej: Cómo actualizar el sistema con apt" />
+          </div>
+          <div class="campo">
+            <label for="inputContenido">¿Qué aprendiste?</label>
+            <textarea id="inputContenido" placeholder="Escribe aquí la explicación, comandos, ejemplos..."></textarea>
+          </div>
+          <div class="campo">
+            <label for="inputEtiquetas">Etiquetas (separadas por coma)</label>
+            <input type="text" id="inputEtiquetas" placeholder="Ej: terminal, apt, permisos" />
+          </div>
+          <div class="form-botones">
+            <button class="btn-primario" onclick="guardarNota()">💾 Guardar</button>
+            <button class="btn-secundario" onclick="cancelarFormulario()">Cancelar</button>
+          </div>
+        </div>
+
+        <!-- Lista de notas (renderizada por JS) -->
+        <div id="listaNotas" class="lista-notas"></div>
+      </div>
+
+      <!-- ===== VISTA B: GUÍA DE APRENDIZAJE ===== -->
+      <div id="vistaGuia" class="oculto">
+        <div class="guia-intro">
+          📚 Conocimientos de Linux para este nivel. Pulsa cada tema para desplegarlo.
+          Usa <b>“＋ A mis notas”</b> para copiar un tema a tu cuaderno (¡y sumar progreso!).
+        </div>
+        <div id="listaGuia"></div>
+      </div>
+
+      <!-- ===== VISTA C: QUIZ / AUTOEVALUACIÓN ===== -->
+      <div id="vistaQuiz" class="oculto">
+        <div id="quizInicio">
+          <div class="guia-intro">
+            Pon a prueba lo aprendido con un mini test de este nivel.
+            Al terminar verás tu puntuación y qué temas conviene repasar.
+          </div>
+          <button class="btn-primario" onclick="abrirSalaPreparacion()">Preparar misión</button>
+          <div id="historialQuiz" class="historial-quiz"></div>
+        </div>
+        <div id="quizPreparacion" class="oculto"></div>
+        <div id="quizContenedor" class="oculto"></div>
+        <div id="quizResultado" class="oculto"></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA: ACADEMIA (lista de módulos)
+         ============================================================ -->
+    <section id="pantallaAcademia" class="oculto">
+      <div class="barra-acciones">
+        <h2>🎓 Academia</h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Inicio</button>
+      </div>
+      <div class="grid-modulos" id="gridModulosAcademia"></div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA: MÓDULO (lecciones + lectura)
+         ============================================================ -->
+    <section id="pantallaModulo" class="oculto">
+      <div class="barra-acciones">
+        <h2 id="moduloTitulo">Módulo</h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Inicio</button>
+        <button class="btn-aviso" id="btnCertModulo" onclick="abrirCertificados()">📜 Certificado</button>
+      </div>
+
+      <!-- Barra de progreso del módulo -->
+      <div class="progreso-panel">
+        <div class="progreso-texto" id="moduloProgresoTexto">0 de 0 lecciones completadas</div>
+        <div class="progreso-barra"><div class="progreso-relleno" id="moduloProgresoRelleno"></div></div>
+      </div>
+
+      <!-- Vista de lecciones normales -->
+      <div id="moduloLecciones">
+        <div class="lecciones-layout">
+          <div id="listaLecciones" class="lista-lecciones"></div>
+          <div id="lecturaLeccion" class="lectura-leccion"></div>
+        </div>
+        <!-- Proyecto práctico final del módulo (lo rellena retos.js) -->
+        <div id="proyectoModulo" class="proyecto-modulo oculto"></div>
+      </div>
+
+      <!-- Vista especial para Inglés Técnico -->
+      <div id="vistaIngles" class="oculto"></div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA: CERTIFICADOS
+         ============================================================ -->
+    <section id="pantallaCertificados" class="oculto">
+      <div class="barra-acciones">
+        <h2>📜 Mis certificados</h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Inicio</button>
+      </div>
+      <div class="cert-nombre">
+        <label for="inputNombreCert">Tu nombre (aparecerá en los certificados):</label>
+        <input type="text" id="inputNombreCert" placeholder="Ej: Ana García" oninput="guardarNombreCert()" />
+      </div>
+      <div id="listaCertificados" class="lista-certificados"></div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA: CREA TU PRIMERA PÁGINA WEB PÚBLICA CON LINUX
+         Guía paso a paso (contenido estático almacenado en el HTML)
+         ============================================================ -->
+    <section id="pantallaServidor" class="oculto">
+      <div class="barra-acciones">
+        <h2>🌍 Crea tu primera página web pública con Linux</h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Inicio</button>
+      </div>
+
+      <div class="guia-intro">
+        🎯 <b>Objetivo:</b> publicar esta misma plataforma (o cualquier carpeta con un <code>index.html</code>)
+        en una dirección de internet para abrirla desde el celular, esté en la red que esté.
+        Lo harás en 3 bloques: servidor local → acceso en tu Wi-Fi → acceso desde cualquier red.
+        Todo con herramientas que ya trae Linux (Python y SSH), sin instalar nada extra.
+      </div>
+
+      <div class="lectura-leccion">
+
+        <!-- ATAJO: publicar en 1 comando durante 20 minutos -->
+        <div class="lec-bloque">
+          <h4>⚡ Atajo: publícalo en 1 comando (20 minutos)</h4>
+          <p>Si solo quieres compartirlo un rato, este proyecto incluye un script que levanta el servidor,
+          abre el túnel público, te muestra la URL y se <b>cierra solo a los 20 minutos</b>:</p>
+          <pre class="bloque-codigo"><code># Publicar durante 20 minutos (puerto 8000 por defecto)
+./publicar-20min.sh
+
+# Otro puerto y otra duración (ej: puerto 8080, 30 minutos)
+./publicar-20min.sh 8080 30</code></pre>
+          <p>Copia la dirección <code>https://....lhr.life</code> que aparece y ábrela desde el celular.
+          Para cerrar antes de tiempo, pulsa <b>Ctrl + C</b>. Si prefieres entender cada paso por separado,
+          sigue el tutorial completo de abajo.</p>
+        </div>
+
+        <!-- BLOQUE 0 -->
+        <div class="lec-bloque">
+          <h4>🧭 Antes de empezar</h4>
+          <p>Necesitas tres cosas: una máquina con Linux, la carpeta de tu proyecto (la que contiene
+          <code>index.html</code>) y conexión a internet. Abre una terminal con <b>Ctrl + Alt + T</b>.
+          Comprueba que tienes Python 3 (viene de fábrica en Linux Mint):</p>
+          <pre class="bloque-codigo"><code>python3 --version
+# Debe mostrar algo como: Python 3.12.3</code></pre>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="lec-bloque">
+          <h4>1️⃣ Paso 1 — Entra en la carpeta de tu proyecto</h4>
+          <p>Sitúate en la carpeta donde está tu <code>index.html</code>. Sustituye la ruta por la tuya:</p>
+          <pre class="bloque-codigo"><code># Ir a la carpeta del proyecto
+cd ~/Escritorio/folder
+
+# Comprobar que aquí está tu index.html
+ls</code></pre>
+          <p>Si ves <code>index.html</code> en la lista, vas bien.</p>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="lec-bloque">
+          <h4>2️⃣ Paso 2 — Levanta el servidor local</h4>
+          <p>Python puede servir una carpeta como página web con un solo comando. El <code>0.0.0.0</code>
+          hace que sea accesible desde otros dispositivos de tu red, no solo desde esta PC:</p>
+          <pre class="bloque-codigo"><code># Arranca un servidor web en el puerto 8000
+python3 -m http.server 8000 --bind 0.0.0.0</code></pre>
+          <p>Déjalo abierto (mientras corra, el servidor está activo). Para detenerlo: <b>Ctrl + C</b>.
+          Pruébalo en esta misma PC abriendo el navegador en
+          <code>http://localhost:8000/</code></p>
+          <p>💡 <b>Versión mejorada (opcional):</b> en este proyecto incluimos un script
+          <code>servidor.py</code> que además detecta tu IP automáticamente y evita la caché.
+          Se ejecuta con <code>python3 servidor.py</code> o con <code>./iniciar-servidor.sh</code>.</p>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="lec-bloque">
+          <h4>3️⃣ Paso 3 — Accede desde el celular en tu MISMA Wi-Fi</h4>
+          <p>Averigua la IP local de tu PC (la dirección dentro de tu casa):</p>
+          <pre class="bloque-codigo"><code># Muestra tu IP local (toma la primera, tipo 192.168.x.x)
+hostname -I | awk '{print $1}'
+# Ejemplo de salida: 192.168.31.33</code></pre>
+          <p>Con el celular conectado a la <b>misma red Wi-Fi</b>, abre en su navegador:</p>
+          <pre class="bloque-codigo"><code>http://192.168.31.33:8000/
+# (cambia la IP por la que te dio el comando anterior)</code></pre>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="lec-bloque">
+          <h4>4️⃣ Paso 4 — Si no carga, abre el puerto en el firewall</h4>
+          <p>Si el celular no conecta, suele ser el cortafuegos. Permite el puerto 8000:</p>
+          <pre class="bloque-codigo"><code>sudo ufw allow 8000
+# Para revisar el estado del firewall:
+sudo ufw status</code></pre>
+          <p>⚠️ Hasta aquí solo funciona dentro de tu casa. Para entrar desde <b>otra red</b>
+          (datos móviles u otra Wi-Fi), sigue con los pasos 5 y 6.</p>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="lec-bloque">
+          <h4>5️⃣ Paso 5 — Crea una clave SSH (solo la primera vez)</h4>
+          <p>Para sacar tu servidor a internet usaremos un «túnel» por SSH a través del servicio
+          gratuito <b>localhost.run</b>. Ese servicio te identifica con una clave SSH, así que primero
+          la generamos (sin contraseña, pulsando Enter o con <code>-N ""</code>):</p>
+          <pre class="bloque-codigo"><code># Comprueba si ya tienes una clave
+ls ~/.ssh/id_ed25519.pub 2>/dev/null
+
+# Si no existe, créala (es instantáneo e inofensivo)
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""</code></pre>
+          <p>🔒 Recuerda: la clave <b>privada</b> (<code>id_ed25519</code>) nunca se comparte; solo viaja
+          la pública. Es exactamente lo que se explica en la lección de SSH del curso.</p>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="lec-bloque">
+          <h4>6️⃣ Paso 6 — Abre el túnel a internet</h4>
+          <p>Con el servidor del Paso 2 todavía corriendo, abre <b>otra terminal</b> y ejecuta:</p>
+          <pre class="bloque-codigo"><code># Reenvía el puerto remoto 80 hacia tu servidor local (8000)
+ssh -o StrictHostKeyChecking=accept-new -R 80:localhost:8000 localhost.run</code></pre>
+          <p>Tras unos segundos verás una línea con tu dirección pública, parecida a:</p>
+          <pre class="bloque-codigo"><code>... tunneled with tls termination, https://6d5ea71ee84b2d.lhr.life</code></pre>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="lec-bloque">
+          <h4>7️⃣ Paso 7 — Ábrela desde cualquier red 🎉</h4>
+          <p>Copia esa URL <code>https://....lhr.life</code> y ábrela en el celular usando
+          <b>datos móviles o cualquier otra Wi-Fi</b>. ¡Ya no necesitas estar en tu red de casa!
+          localhost.run también muestra un código QR en la terminal para escanearlo directo.</p>
+        </div>
+
+        <!-- DETENER -->
+        <div class="lec-bloque">
+          <h4>🛑 Cómo detener todo</h4>
+          <p>Pulsa <b>Ctrl + C</b> en cada terminal: una para el túnel y otra para el servidor.
+          Al cerrar el túnel, la URL pública deja de funcionar.</p>
+        </div>
+
+        <!-- ERRORES -->
+        <div class="lec-bloque">
+          <h4>⚠️ Errores comunes</h4>
+          <ul>
+            <li><b>«Permission denied (publickey)»</b> al abrir el túnel: te falta la clave SSH. Haz el Paso 5.</li>
+            <li><b>«Address already in use»</b>: el puerto 8000 está ocupado. Usa otro, por ejemplo 8080, en el servidor y en el túnel.</li>
+            <li><b>El celular no carga en tu Wi-Fi</b>: revisa que sea la misma red y abre el puerto (Paso 4).</li>
+            <li><b>El comando se «cuelga» sin volver al prompt</b>: es normal; el servidor y el túnel se quedan corriendo. No los cierres mientras los uses.</li>
+          </ul>
+        </div>
+
+        <!-- TIPS -->
+        <div class="lec-bloque">
+          <h4>🎓 Tips del profesor</h4>
+          <ul>
+            <li>Necesitas <b>dos terminales</b> a la vez: una con el servidor (Paso 2) y otra con el túnel (Paso 6).</li>
+            <li>La URL gratuita <b>cambia cada vez</b> que reinicias el túnel. Para una fija, crea una cuenta gratuita en localhost.run y registra tu clave.</li>
+            <li>Esa URL es <b>pública</b>: cualquiera con el enlace puede entrar mientras el túnel esté abierto. Ciérralo cuando no lo uses.</li>
+            <li>Los datos de la plataforma se guardan en cada dispositivo (localStorage); el servidor solo entrega los archivos, no sincroniza tu progreso entre PC y celular.</li>
+          </ul>
+        </div>
+
+        <!-- RESUMEN -->
+        <div class="lec-bloque">
+          <h4>📝 Resumen rápido (los comandos clave)</h4>
+          <pre class="bloque-codigo"><code># 1) Servidor local (terminal 1)
+cd ~/Escritorio/folder
+python3 -m http.server 8000 --bind 0.0.0.0
+
+# 2) Tu IP local para la misma Wi-Fi
+hostname -I | awk '{print $1}'      ->  http://TU_IP:8000/
+
+# 3) Clave SSH (solo la primera vez)
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
+
+# 4) Túnel a internet (terminal 2)
+ssh -o StrictHostKeyChecking=accept-new -R 80:localhost:8000 localhost.run
+#    -> copia la URL https://....lhr.life y ábrela en el celular</code></pre>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PANTALLA: DICCIONARIO INTERACTIVO DE COMANDOS
+         ============================================================ -->
+    <section id="pantallaComandos" class="oculto">
+      <div class="barra-acciones">
+        <h2>🧰 Diccionario de comandos</h2>
+        <button class="btn-secundario" onclick="volverAlMenu()">← Inicio</button>
+      </div>
+
+      <div class="guia-intro">
+        🔎 Referencia rápida para tu trabajo. Busca por nombre o por lo que hace
+        (ej: <i>“escanear puertos”</i>, <i>“ver logs”</i>). Las fichas provienen del material de
+        <code>hacking_material</code>. Marca tus favoritos con la ⭐.
+      </div>
+
+      <!-- Buscador -->
+      <div class="buscador">
+        <span class="buscador-icono" aria-hidden="true">🔍</span>
+        <label for="inputBuscarCmd" class="sr-only">Buscar comandos</label>
+        <input type="text" id="inputBuscarCmd" placeholder="¿Qué quieres hacer? Ej: escanear puertos, copiar archivos..." oninput="renderizarComandos()" />
+        <button class="btn-secundario" onclick="limpiarBusquedaCmd()">Limpiar</button>
+      </div>
+
+      <!-- Filtros por categoría -->
+      <div id="filtrosComandos" class="barra-etiquetas"></div>
+
+      <!-- Resultados -->
+      <div class="cmd-contador" id="cmdContador"></div>
+      <div id="listaComandos" class="lista-comandos"></div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       PIE DE PÁGINA
+       ============================================================ -->
+  <footer class="pie-pagina">
+    <p><b>BenaviDev</b> · Plataforma para aprender Linux, hecha con HTML, CSS y JavaScript puro.</p>
+    <p class="pie-nota">Tu progreso se guarda en este dispositivo (localStorage). Material de referencia basado en guías de Bash, Linux y seguridad.</p>
+    <button class="btn-secundario" onclick="iniciarTutorial(true)" style="margin-top:12px;">Ver tutorial guiado</button>
+  </footer>
+
+  <!-- ============================================================
+       MODAL: CERTIFICADO (vista previa + exportar)
+       ============================================================ -->
+  <div id="modalCertificado" class="modal-fondo oculto" role="dialog" aria-modal="true" aria-label="Certificado">
+    <div class="modal modal-cert">
+      <div class="modal-cabecera">
+        <h2>📜 Certificado</h2>
+        <button class="cerrar" onclick="cerrarCertificado()" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        <!-- El certificado se dibuja aquí como SVG -->
+        <div id="certificadoVista" class="certificado-vista"></div>
+      </div>
+      <div class="modal-pie">
+        <button class="btn-secundario" onclick="descargarCertificadoImagen()">🖼️ Descargar imagen (PNG)</button>
+        <button class="btn-primario" onclick="imprimirCertificado()">🖨️ PDF / Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: RESUMEN INTELIGENTE
+       ============================================================ -->
+  <div id="modalResumen" class="modal-fondo oculto" role="dialog" aria-modal="true" aria-labelledby="tituloModalResumen">
+    <div class="modal">
+      <div class="modal-cabecera">
+        <h2 id="tituloModalResumen">📋 Resumen de lo aprendido</h2>
+        <button class="cerrar" onclick="cerrarResumen()" title="Cerrar">✕</button>
+      </div>
+
+      <div class="filtro-resumen">
+        <label for="filtroNivel">Mostrar:</label>
+        <select id="filtroNivel" onchange="renderizarResumen()">
+          <option value="todos">Todos los niveles</option>
+          <option value="principiante">Solo Principiante</option>
+          <option value="intermedio">Solo Intermedio</option>
+          <option value="avanzado">Solo Avanzado</option>
+        </select>
+
+        <label for="agruparPor" style="margin-left:10px;">Agrupar por:</label>
+        <select id="agruparPor" onchange="renderizarResumen()">
+          <option value="nivel">Nivel</option>
+          <option value="etiqueta">Etiqueta</option>
+        </select>
+
+        <label for="ordenResumen" style="margin-left:10px;">Ordenar por:</label>
+        <select id="ordenResumen" onchange="renderizarResumen()">
+          <option value="fecha">Fecha (reciente primero)</option>
+          <option value="fecha-asc">Fecha (antigua primero)</option>
+          <option value="titulo">Título (A-Z)</option>
+        </select>
+      </div>
+
+      <div class="modal-cuerpo">
+        <div id="areaImprimible"></div>
+      </div>
+
+      <div class="modal-pie">
+        <button class="btn-secundario" onclick="copiarResumen()">📄 Copiar</button>
+        <button class="btn-secundario" onclick="descargarMarkdown()">⬇️ Markdown (.md)</button>
+        <button class="btn-secundario" onclick="descargarTexto()">⬇️ Texto (.txt)</button>
+        <button class="btn-primario" onclick="exportarPDF()">🖨️ PDF / Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: TERMINAL SIMULADA
+       ============================================================ -->
+  <div id="modalTerminal" class="modal-fondo oculto" role="dialog" aria-modal="true" aria-label="Terminal de práctica">
+    <div class="modal modal-terminal">
+      <div class="modal-cabecera">
+        <h2>💻 Terminal de práctica</h2>
+        <button class="cerrar" onclick="cerrarTerminal()" title="Cerrar">✕</button>
+      </div>
+      <div class="terminal-ayuda">
+        Comandos disponibles: <code>ls</code> <code>cd</code> <code>pwd</code> <code>mkdir</code>
+        <code>cat</code> <code>echo</code> <code>touch</code> <code>rm</code> <code>clear</code> <code>help</code>.
+        Escribe <code>help</code> para más detalles.
+      </div>
+      <!-- Panel de misiones gamificadas (lo rellena retos.js) -->
+      <div id="terminalMisiones" class="terminal-misiones"></div>
+      <!-- Salida de la terminal -->
+      <div id="terminalSalida" class="terminal-salida" onclick="enfocarTerminal()"></div>
+      <!-- Línea de entrada -->
+      <div class="terminal-entrada">
+        <span id="terminalPrompt" class="terminal-prompt">usuario@mint:~$</span>
+        <input type="text" id="terminalInput" autocomplete="off" spellcheck="false" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: LOGROS / INSIGNIAS
+       ============================================================ -->
+  <div id="modalLogros" class="modal-fondo oculto" role="dialog" aria-modal="true" aria-label="Mis logros">
+    <div class="modal">
+      <div class="modal-cabecera">
+        <h2>🏆 Mis logros</h2>
+        <button class="cerrar" onclick="cerrarLogros()" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        <div id="panelLogros" class="panel-logros"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL: MI CUENTA (perfil local para certificados)
+       ============================================================ -->
+  <div id="modalCuenta" class="modal-fondo oculto" role="dialog" aria-modal="true" aria-label="Mi cuenta">
+    <div class="modal modal-cuenta">
+      <div class="modal-cabecera">
+        <h2 id="tituloCuenta">Mi cuenta</h2>
+        <button class="cerrar" onclick="cerrarCuenta()" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        <!-- Lo rellena renderizarCuenta() en experiencia.js -->
+        <div id="cuentaCuerpo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificación flotante -->
+  <div id="toast"></div>
+
+  <!-- ============================================================
+       SCRIPTS
+       datos.js  -> conocimientos, quizzes y catálogo de logros
+       app.js    -> toda la lógica de la aplicación
+       ============================================================ -->
+  <script src="js/datos.js" defer></script>
+  <script src="js/contenido.js" defer></script>
+  <script src="js/redes.js" defer></script>
+  <script src="js/comandos.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/experiencia.js" defer></script>
+  <script src="js/retos.js" defer></script>
+</body>
+</html>
